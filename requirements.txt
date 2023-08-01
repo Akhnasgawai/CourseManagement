@@ -9,7 +9,7 @@ click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.3.0
 colorama==0.4.6
-Django==4.2.3
+django==4.2.3
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 idna==3.4
