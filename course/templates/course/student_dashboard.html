@@ -1,0 +1,37 @@
+{% extends 'index.html' %} {% load static %} {% block student_css %}
+<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<div>
+			<h1 class="main-heading">Student Dashboard</h1>
+		</div>
+		<!-- View course section -->
+		{% if courses|length < 1 %}
+		<p class="empty-queryset">No courses to show</p>
+		{% endif %}
+		{% for course in courses %}
+		<div>
+			<h3 class="course-title">{{ course.title }}</h3>
+			<p class="course-description">{{course.description}}</p>
+			<p class="course-tutor">@{{course.created_by.username}}</p>
+			<div class="amount">
+				<div>
+					<i class="material-icons">currency_rupee</i>
+					<p class="course-price">{{course.price}}</p>
+				</div>
+                <div
+                    id="subscribe"
+                >
+                    <a href="{% url 'view_content' course.id %}" id="subscribe-btn">
+                        View Course
+                    </a>
+                </div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'index.html' %} 
+{% load static %}
+{% block student_css %}
+<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'css/register.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="main-container">
+    {% include 'course/navbar.html' %}
+    <div id="container">
+        <div>
+            {% if type == "create" %}
+            <h1 class="main-heading">Add Course</h1>
+            {% else %}
+            <h1 class="main-heading">Update Course</h1>
+            {% endif %}
+        </div>
+        <form class="register_form" method="post">
+            {% csrf_token %}
+            <div class="fieldWrapper">
+                {{ form.title }}
+                <label for="{{ form.title.id_for_label }}">Title</label>
+            </div>
+            <div class="errors">
+                {{ form.title.errors }}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.description }}
+                <label for="{{ form.description.id_for_label }}">Description</label>
+            </div>
+            <div class="errors">
+                {% if form.email.errors %}
+                {{ form.email.errors }}
+                {% else %}
+                {{ form.non_field_errors }}
+                {% endif %}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.price }}
+                <label for="{{ form.price.id_for_label }}">Price</label>
+            </div>
+            <div class="errors">
+                {{ form.price.errors }}
+            </div>
+            {% if type == "create" %}
+            <button class="submit_btn" type="submit">Add Course</button>
+            {% else %}
+            <button class="submit_btn" type="submit">Update Course</button>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

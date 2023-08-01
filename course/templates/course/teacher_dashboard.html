@@ -1,0 +1,69 @@
+{% extends 'index.html' %} 
+{% load static %}
+{% block student_css %}
+<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'css/modal.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="main-container">
+    {% include 'course/navbar.html' %}
+    <div id="container">
+        <div>
+            <h1 class="main-heading">Teacher Dashboard</h1>
+        </div>
+        <!-- View course section -->
+        {% if courses|length < 1 %}
+		<p class="empty-queryset">No courses, Please Add your course!</p>
+		{% endif %}
+        {% for course in courses %}
+        <div>
+            <h3 class="course-title">{{ course.title }}</h3>
+            <p class="course-description">{{course.description}}</p>
+            <!-- <p class="course-tutor">@{{course.created_by.username}}</p> -->
+            <div class="amount">
+                <div>
+                    <i class="material-icons">currency_rupee</i>
+                    <p class="course-price">{{course.price}}</p>
+                </div>
+                <div class="add_content">
+                    <a href="{% url 'view_content' course.id %}">
+                        <div>
+                            <i class="fa-solid fa-book"></i>
+                            <h4>View Content</h4>
+                        </div>
+                    </a>
+                    <a href="{% url 'add_course' course.id %}">
+                        <div>
+                            <i class="fa-solid fa-pen"></i>
+                            <h4>Update Course</h4>
+                        </div>
+                    </a>
+                    <a href="{% url 'add_content' course.id %}">
+                        <div>
+                            <i class="fa-solid fa-plus"></i>
+                            <h4>Add Content</h4>
+                        </div>
+                    </a>
+                    <!-- href="{% url 'add_course' course.id %} -->
+                    <a onclick="showDeleteConfirmationModal('{{course.id}}', 'course')">
+                        <div>
+                            <i class="fa-solid fa-trash"></i>
+                            <h4>Delete Course</h4>
+                        </div>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h2>Confirm Delete</h2>
+                <p>Are you sure you want to delete this course? {{course.id}} </p>
+                <button onclick="deleteItem()">Yes, Delete</button>
+                <button onclick="closeDeleteConfirmationModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+<script src="{% static 'js/modal.js' %}"></script>
+{% endblock %}

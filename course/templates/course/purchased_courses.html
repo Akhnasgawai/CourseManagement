@@ -1,0 +1,29 @@
+{% extends 'index.html' %} {% load static %} {% block student_css %}
+<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<div>
+			<h1 class="main-heading">My Courses</h1>
+		</div>
+		<!-- View course section -->
+		{% if subscribed_courses|length < 0 %}
+		<p class="empty-queryset">No courses purchased yet</p>
+		{% endif %}
+		{% for subscribed_course in subscribed_courses %}
+		<div>
+			<h3 class="course-title">{{ subscribed_course.courseId.title }}</h3>
+			<p class="course-description">{{subscribed_course.courseId.description}}</p>
+			<p class="course-tutor">@{{ subscribed_course.courseId.created_by.username }}</p>
+            <div id="purchased-btn-container">
+                <a href="{% url 'view_content' subscribed_course.courseId_id %}" id="purchased-btn">
+                    View Course
+                </a>
+            </div>
+		</div>
+		{% endfor %}
+	</div>
+    
+</div>
+{% endblock %}

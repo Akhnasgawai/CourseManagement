@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link
+			href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+		<link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+		<link rel="stylesheet" href="{% static 'css/variable.css' %}" />
+		{% block register_css %} {% endblock %} 
+		{% block login_css %} {% endblock %} 
+		{% block verify_otp_css %} {% endblock %}
+		{% block student_css %} {% endblock %}
+		{% block success_css %} {% endblock %}
+		{% block view_student_css %} {% endblock %}
+		<title>Course Academy</title>
+	</head>
+	<body>
+		<!-- {% block navbar %}
+		{% endblock %}  -->
+		<div>
+			{% block content %}
+			{% endblock %}
+		</div>
+		<script
+			src="https://kit.fontawesome.com/6926aa4cc9.js"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>

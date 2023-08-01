@@ -1,0 +1,44 @@
+{% extends 'index.html' %} 
+{% load static %}
+{% block view_student_css %}
+<link rel="stylesheet" href="{% static 'css/view_students.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="main-container">
+    {% include 'course/navbar.html' %}
+    <div id="container">
+        <div class="header-box">
+            <h1 class="main-heading">Students</h1>
+        </div>
+        <!-- View purchased course section -->
+        <form id="course-selection" action="{% url 'view_subscribed_student' %}">
+            <select name="course" id="course">
+                {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.title }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <input id="course-submit" type="submit" value="Submit">
+        </form>
+        {% if data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Username</th>
+                    <th>Student Email</th>
+                    <th>Course</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for students in subscribed_students %}
+                <tr>
+                    <td>{{ students.userId.username }}</td>
+                    <td>{{ students.userId.email }}</td>
+                    <td>{{ students.courseId.title }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+{% endblock %}

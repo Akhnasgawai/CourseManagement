@@ -1,0 +1,42 @@
+{% extends 'index.html' %}
+{% load static %}  
+{% block register_css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}" />
+<script src="{% static 'js/password.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="login">
+	<h1>Login</h1>
+	<form class="login_form" method="post">
+		{% csrf_token %}
+			<div class="fieldWrapper">
+				{{ form.email }}
+				<label for="{{ form.email.id_for_label }}">Email</label>
+			</div>
+			<div class="errors">
+			</div>
+			<div class="fieldWrapper">
+				{{ form.password }}
+				<label for="{{ form.password.id_for_label }}">Password</label>
+				<span onclick="togglePasswordField('id_password','eye-icon')" class="input_icon_wrapper">
+					<i id="eye-icon" class="input_icon fa-regular fa-eye"></i>
+				</span>
+			</div>
+			<div class="errors">
+			</div>
+			<div class="fieldWrapper">
+				{{ form.role }}
+			</div>
+			<div class="errors">
+				<!-- {{ form.role.errors }} -->
+				{% for error,value in errors.items %}
+				<ul class="errorlist">
+					<li>{{value}}</li>
+				</ul>
+				{% endfor %}
+			</div>
+		<button class="submit_btn" type="submit">Login</button>
+	</form>
+	<p class="direct-link">Don't have account? <a href="{% url 'register' %}">Create One!</a></p>
+</div>
+{% endblock %}

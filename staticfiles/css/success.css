@@ -1,0 +1,33 @@
+.success{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 93vh;
+}
+
+/* CSS for the tick icon animation and rounded background */
+.tick-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 350px;
+    height: 350px;
+    background-color: #353535; /* Adjust background color and opacity as needed */
+    border-radius: 50%;
+    overflow: hidden; /* Clip the SVG animation within the rounded background */
+}
+  
+.tick-path {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawTick 2s ease-in-out forwards;
+}
+  
+@keyframes drawTick {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+}

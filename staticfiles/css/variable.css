@@ -1,0 +1,8 @@
+:root{
+    --backgroundColor: #212121;
+    --primary-color : #999;
+    --border-color: #fff;
+    --error-color: #ff0000;
+    --valid-input: #d1c5fc;
+    --font-family: 'Poppins', sans-serif;
+}

@@ -1,0 +1,36 @@
+{% extends 'index.html' %} {% load static %} {% block verify_otp_css %}
+<link rel="stylesheet" href="{% static 'css/verifyOtp.css' %}" />
+{% endblock %} {% block content %}
+<form id="otp-form" class="otp-form" method="post">
+	{% csrf_token %}
+	<input type="hidden" id="otp" name="otp" required />
+	<!-- <div class="otp-container">
+		<input type="hidden" name="email" value="{{ email }}" />
+		<p>{{email}}</p>
+		<label for="otp">Enter the OTP:</label>
+		<input type="text" id="otp" name="otp" required />
+		<button type="submit">Verify OTP</button>
+	</div> -->
+	<div class="otp-container">
+		<p>Enter OTP</p>
+		<div class="otp-bx">
+			<input type="text" required maxlength="1" />
+			<input type="text" required maxlength="1" />
+			<input type="text" required maxlength="1" class="space" />
+			<input type="text" required maxlength="1" />
+			<input type="text" required maxlength="1" />
+			<input type="text" required maxlength="1" />
+		</div>
+		<div class="resend">
+			<p><a class="resend-otp" href="{% url 'resend_otp' %}">Resend OTP</a></p>
+		</div>
+		<div class="errorlist">
+			{% if error_message %}
+			<p>{{ error_message }}</p>
+			{% endif %}
+		</div>
+	</div>
+
+	<script src="{% static 'js/otp.js' %}"></script>
+</form>
+{% endblock %}

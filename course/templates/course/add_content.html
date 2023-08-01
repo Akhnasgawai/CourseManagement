@@ -1,0 +1,48 @@
+{% extends 'index.html' %} 
+{% load static %}
+{% block student_css %}
+<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'css/register.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="main-container">
+    {% include 'course/navbar.html' %}
+    <div id="container">
+        <div>
+            <h1 class="main-heading">Add Content</h1>
+        </div>
+        <form class="register_form" method="post">
+            {% csrf_token %}
+            <div class="fieldWrapper">
+                {{ form.course_id }}
+                <label for="{{ form.course_id.id_for_label }}">Course</label>
+            </div>
+            <div class="errors">
+                {{ form.course_id.errors }}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.content_title }}
+                <label for="{{ form.content_title.id_for_label }}">Content Title</label>
+            </div>
+            <div class="errors">
+                {{ form.content_title.errors }}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.content }}
+                <label for="{{ form.content.id_for_label }}">Content</label>
+            </div>
+            <div class="errors">
+                {{ form.content.errors }}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.content_link }}
+                <label for="{{ form.content_link.id_for_label }}">Content Link</label>
+            </div>
+            <div class="errors">
+                {{ form.content_link.errors }}
+            </div>
+            <button class="submit_btn" type="submit">Add Content</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

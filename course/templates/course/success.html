@@ -1,0 +1,28 @@
+{% extends 'index.html' %} {% load static %} {% block success_css %}
+<link rel="stylesheet" href="{% static 'css/success.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<!-- <div class="success">
+            <span class="material-icons">done</span>
+        </div> -->
+        <div class="success">
+            <div class="tick-icon">
+                <!-- SVG icon for the tick -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+                  <path class="tick-path" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+        </div>
+	</div>
+    
+</div>
+<script>
+    // Function to redirect to another page after 5 seconds
+    function redirectToAnotherPage() {
+      window.location.href = "{% url 'purchased_course' %}"; 
+    }
+    setTimeout(redirectToAnotherPage, 3000);
+  </script>
+{% endblock %}

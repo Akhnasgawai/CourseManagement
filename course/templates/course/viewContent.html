@@ -1,0 +1,97 @@
+{% extends 'index.html' %} {% load static %} {% block student_css %}
+<link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'css/modal.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<div>
+			<h3 class="main-heading">{{ course_title }}</h3>
+		</div>
+		{% for content in course_contents %}
+		<!-- View course section -->
+			{% if request.user.role == 'teacher' %}
+			<div>
+				<p class="course-title">{{ forloop.counter }}. {{ content.content_title }}</p>
+				<p class="course-description">{{content.content}}</p>
+				<p class="course-tutor">{{content.content_link}}</p>
+				<div class="action-btn-container">
+					<a href="{% url 'update_content' content.id %}">
+						<div>
+							<i class="fa-solid fa-pen"></i>
+							<h4>Update Content</h4>
+						</div>
+					</a>
+					<a onclick="showDeleteConfirmationModal('{{content.id}}','content')">
+						<div>
+							<i class="fa-solid fa-trash"></i>
+							<h4>Delete Content</h4>
+						</div>
+					</a>
+				</div>
+			</div>
+			{% elif purchased %}
+			<div>
+				<p class="course-title">{{ forloop.counter }}. {{ content.content_title }}</p>
+				<p class="course-description">{{content.content}}</p>
+				<p class="course-tutor">{{content.content_link}}</p>
+			</div>
+			{% else %}
+			<div>
+				<p class="course-title">{{ forloop.counter }}. {{ content.content_title }}</p>
+			</div>
+			{% endif %}
+		{% endfor %}
+		{% if purchased is False and request.user.role == 'student' %}
+			<div
+				id="checkout"
+			>
+				<a id="rzp-button1">
+					Buy
+				</a>
+			</div>
+			<script>
+				console.log("ENTERED")
+			</script>
+			<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+			<script>
+				var options = {
+				"key": "{{key}}",
+				"currency": "{{payment.currency}}",
+				"name": "Course Academy",
+				"description": "Learn from Fundamentals",
+				"image": "https://example.com/your_logo",
+				"order_id": "{{payment.id}}",
+				"handler": async function (response){
+					window.location.href = `http://127.0.0.1:8000/success/?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&razorpay_signature=${response.razorpay_signature}` 
+				},
+				};
+				var rzp1 = new Razorpay(options);
+				rzp1.on('payment.failed', function (response){
+						alert(response.error.code);
+						alert(response.error.description);
+						alert(response.error.source);
+						alert(response.error.step);
+						alert(response.error.reason);
+						alert(response.error.metadata.order_id);
+						alert(response.error.metadata.payment_id);
+				});
+				document.getElementById('rzp-button1').onclick = function(e){
+					rzp1.open();
+					e.preventDefault();
+				}
+
+			</script>
+		{% endif %}
+	</div>
+</div>
+<div id="deleteModal" class="modal">
+	<div class="modal-content">
+		<h2>Confirm Delete</h2>
+		<p>Are you sure you want to delete this course?</p>
+		<button onclick="deleteItem()">Yes, Delete</button>
+		<button onclick="closeDeleteConfirmationModal()">Cancel</button>
+	</div>
+</div>
+<script src="{% static 'js/modal.js' %}"></script>
+{% endblock %}

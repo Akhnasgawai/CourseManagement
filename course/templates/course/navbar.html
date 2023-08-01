@@ -1,0 +1,77 @@
+{% load static %}  
+<navbar id="navbar">
+	<nav>
+		<div class="header-nav">
+			<ul>
+				<div id="header-nav-div">
+					<h4 id="navbar-heading">Dashboard</h4>
+					<i class="fa-solid fa-bars" onclick="toggleCollapse()"></i>
+				</div>
+			</ul>
+			<ul>
+				<div id="search-box">
+					<form action="{% url 'search' %}" method="GET">
+						<input name="query" id="search" placeholder="Search by title, author, description" type="search"></input>
+						<button id="search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+					</form>
+				</div>
+			</ul>
+			<hr>
+		</div>
+		<div class="middle-nav">
+			<ul>
+				{% if user.id %}
+				{% if user.role == 'teacher' %}
+					<a href="{% url 'teacher_dashboard' %}">
+						<div class="active-tab">
+							<i class="fa-solid fa-table"></i>
+							<h4>All Courses</h4>
+						</div>
+					</a>
+					<a href="{% url 'add_course' %}">
+						<div>
+							<i class="fa-solid fa-plus"></i>
+							<h4>Add Course</h4>
+						</div>
+					</a>
+					<a href="{% url 'view_subscribed_student' %}">
+						<div>
+							<i class="fa-solid fa-graduation-cap"></i>
+							<h4>View Students</h4>
+						</div>
+					</a>
+				{% else %}
+					<a href="{% url 'student_dashboard' %}">
+						<div class="active-tab">
+							<i class="fa-solid fa-plus"></i>
+							<h4>All Course</h4>
+						</div>
+					</a>
+					<a href="{% url 'purchased_course' %}">
+						<div>
+							<i class="fa-solid fa-table"></i>
+							<h4>Purchased Course</h4>
+						</div>
+					</a>
+				{% endif %}
+				{% endif %}
+			</ul>
+		</div>
+		<div class="bottom-nav">
+			<ul>
+				<div>
+					<img src="{% static 'images/user.JPG' %}" alt="">
+					{% if user.id %}
+					<p id="user-welcome">Hi there, <br>{{user.username}}</p>
+					{% else %}
+					<p id="user-welcome">Hi there, <br>guest</p>
+					{% endif %}
+				</div>
+				<div>
+					<a id="logout-btn" href="{% url "logout" %}"><i class="fa-solid fa-power-off"></i></a>
+				</div>
+			</ul>
+		</div>
+	</nav>
+</navbar>
+<script src="{% static '/js/collapse.js' %}"></script>

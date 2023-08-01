@@ -1,0 +1,159 @@
+#container > div{
+    background-color: #353535;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+#container div .main-heading{
+    color: #fff;
+}
+
+#container > div h3{
+    color: #fff;
+    font-weight: 600;
+}
+
+#container > div p{
+    color: #fff;
+}
+
+#container > div .amount{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+}
+
+#container div .amount .add_content a {
+    text-decoration: none;
+    color: #fff;
+}
+
+#container div .amount div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#container div .amount .add_content {
+    /* display: flex; */
+    gap: 10px;
+}
+
+#container div .amount .add_content a div{
+    gap: 5px;
+}
+
+#container div .amount div i{
+    color: #fff;
+    font-size: 14px;
+}
+
+#container div .amount div a, #container #checkout #rzp-button1{
+    background-color: transparent;
+	padding: 8px 12px;
+	border-radius: 5px;
+	color: var(--primary-color);
+	border: none;
+	outline: 2px solid var(--border-color);
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	font-weight: 600;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    transition: all 0.5s;
+    text-decoration: none;
+}
+
+#container #checkout{
+    background-color: transparent;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#container #checkout #rzp-button1{
+    width: 10%;
+    background-color: #353535;
+    color: var(--border-color);
+    font-size: 16px;
+}
+
+#purchased-btn-container{
+    margin: 15px 0;
+}
+
+#purchased-btn{
+    background-color: transparent;
+	padding: 8px 12px;
+	border-radius: 5px;
+	color: var(--primary-color);
+	border: none;
+	outline: 2px solid var(--border-color);
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	font-weight: 600;
+    font-size: 11px;
+    text-decoration: none;
+    transition: all 0.5s;
+}
+
+#container div .amount div a:hover, #container #checkout #rzp-button1:hover, #purchased-btn:hover, .action-btn-container a div:hover{
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+#container div .course-description{
+    text-align: justify!important;
+    color: var(--primary-color);
+}
+
+#container div .course-tutor{
+    font-size: 12px;
+    color: var(--primary-color);
+}
+
+#container div .amount #subscribed{
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+#container div .amount #subscribed a{
+    color: #fff;
+    cursor: default;
+}
+
+.action-btn-container{
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn-container a{
+    text-decoration: none;
+}
+
+.action-btn-container a div{
+    display: flex;
+    background-color: transparent;
+	padding: 8px 12px;
+	border-radius: 5px;
+	color: var(--primary-color);
+	border: none;
+	outline: 2px solid var(--border-color);
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	font-weight: 600;
+    font-size: 11px;
+    text-decoration: none;
+    transition: all 0.5s;
+    align-items: center;
+    gap: 5px;
+}

@@ -1,0 +1,125 @@
+.register,
+.login {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.register h1,
+.login h1 {
+	text-align: center;
+	color: var(--primary-color);
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-bottom: 15px;
+}
+
+.fieldWrapper {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	width: 300px;
+}
+
+.errors {
+	padding: 8px 0;
+	min-height: 25px;
+}
+
+.fieldWrapper input,
+.fieldWrapper select {
+	padding: 10px;
+	width: 100%;
+	border: none;
+	border-radius: 4px;
+	font: inherit;
+	color: var(--border-color);
+	background-color: transparent;
+	outline: 2px solid var(--border-color);
+}
+
+.fieldWrapper select option {
+	background-color: var(--backgroundColor);
+}
+
+.fieldWrapper label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 13px;
+	color: var(--primary-color);
+	font-weight: 300;
+	letter-spacing: 1.1px;
+	transform: translate(15px, 12px);
+	transform-origin: left;
+	transition: transform 0.25s;
+	pointer-events: none;
+	text-transform: uppercase;
+}
+
+.fieldWrapper input:focus ~ label,
+.fieldWrapper input:valid ~ label,
+.fieldWrapper input:not(:placeholder-shown) ~ label {
+	transform: translate(10px, -10px) scale(0.8);
+	color: var(--valid-input);
+	background-color: var(--backgroundColor);
+	padding: 0 8px;
+	border-left: 2px solid var(--valid-input);
+	border-right: 2px solid var(--valid-input);
+}
+
+.fieldWrapper input:is(:focus-visible, :valid) {
+	outline-color: var(--valid-input);
+}
+
+.input_icon_wrapper {
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	transform: translateY(-45%);
+	cursor: pointer;
+}
+
+.input_icon {
+	color: var(--primary-color);
+	font-size: 16px;
+}
+
+.input_icon:hover {
+	color: var(--border-color);
+}
+
+.submit_btn {
+	background-color: transparent;
+	padding: 10px 14px;
+	border-radius: 5px;
+	color: var(--primary-color);
+	border: none;
+	outline: 2px solid var(--border-color);
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	font-weight: 700;
+}
+
+.errorlist {
+	padding: 0;
+	margin: 0;
+	width: 300px;
+}
+
+.errorlist li {
+	list-style: none;
+	margin: 0;
+	font-size: 14px;
+	color: var(--error-color);
+}
+
+.direct-link{
+	margin-top: 15px;
+	color: var(--border-color);
+	font-size: 14px;
+}
