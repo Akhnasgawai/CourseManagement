@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from django import forms
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm
+from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm, ChangePasswordForm
 from .models import User, Course, SubscribedCourse, CourseContent
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -22,14 +25,14 @@ def register_view(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get("email")
             username = form.cleaned_data.get("username")
             role = form.cleaned_data.get("role")  # Store the role in the session
-            user = form.save()
-            generate_otp(user)
             request.session["username"] = username
             request.session["role"] = role
-            return redirect("verify_otp")
+            user = form.save()
+            generate_otp(user)
+            url = reverse('verify_otp', args=["register"])
+            return redirect(url)
         else:
             errors = form.errors
     else:
@@ -75,7 +78,8 @@ def login_view(request):
                     request.session["username"] = username
                     request.session["role"] = role
                     generate_otp(user)
-                    return redirect("verify_otp")
+                    url = reverse('verify_otp', args=["login"])
+                    return redirect(url)
                 else:
                     errors[
                         "invalid_role"
@@ -109,7 +113,8 @@ def resend_otp(request):
     username = request.session.get("username")
     user = User.objects.get(username = username)
     generate_otp(user)
-    return redirect("verify_otp")    
+    url = reverse('verify_otp', args=["login"])
+    return redirect(url) 
 
 def generate_otp(user):
     otp = str(random.randint(100000, 999999))
@@ -121,7 +126,33 @@ def generate_otp(user):
     message = f"Your OTP for login is: {otp} \n valid till 5 minutes"
     send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)
 
-def verify_otp_view(request):
+def set_password(request):
+    username = request.session.get("username")
+    if request.method == "POST":
+        form = ChangePasswordForm(request.POST)
+        try:
+            form.clean()
+            password = form.data.get("password")
+            print("PASSWORD: ",password)
+            password = make_password(password, hasher='default')
+            user = User.objects.get(username=username)
+            user.password = password
+            user.save()
+            return redirect("/")
+        except forms.ValidationError as e:
+            form = ChangePasswordForm()
+            errors = " "
+            errors = errors.join(e)
+            return render(request, "course/reset_password.html", {"form": form, "errors": errors})
+        if form.errors:
+            return render(request, "course/reset_password.html", {"form": form, "errors": errors})
+        password = request.POST["password"]
+        print("PASSWORD: ",password)
+        return redirect("/")
+
+
+
+def verify_otp_view(request, path):
     username = request.session.get("username")
     role = request.session.get("role")
     if request.method == "POST":
@@ -137,12 +168,18 @@ def verify_otp_view(request):
                 user.otp = None
                 user.otp_created_at = None
                 user.save()
-                # Perform login or redirect to the dashboard
-                login(request, user)
-                if role == "student":
-                    return redirect("student_dashboard")
+                if path == 'login':
+                # Perform login or redirect to the dashboard if path is login or register
+                    login(request, user)
+                    if role == "student":
+                        return redirect("student_dashboard")
+                    else:
+                        return redirect("teacher_dashboard")
+                elif path == 'register':
+                    return redirect("/")
                 else:
-                    return redirect("teacher_dashboard")
+                    form = ChangePasswordForm()
+                    return render(request, "course/reset_password.html", {"form":form})
             else:
                 # Handle invalid OTP
                 error_message = "Invalid OTP"
@@ -403,3 +440,25 @@ def purchasedCourse(request):
     subscribed_courses = SubscribedCourse.objects.filter(userId_id = request.user.id, is_paid = True)
     print(subscribed_courses)
     return render(request, "course/purchased_courses.html", {"subscribed_courses":subscribed_courses})
+
+def reset_password(request):
+    form = UserRegistrationForm()
+    if request.method == "POST":
+        email = request.POST["email"]
+        role = request.POST["role"]
+        try:
+            user = User.objects.get(email=email, role=role)
+            request.session["username"] = user.username
+            request.session["role"] = role
+        except:
+            errors = {}
+            user = None
+        print(user)
+        if user is not None:
+            generate_otp(user)
+            url = reverse("verify_otp", args=["forgot_password"])
+            return redirect(url)
+        else:
+            errors = "The email and role are not associated, please check your email and role"
+            return render(request, "course/send_password_reset.html", {"form": form, "invalid_data": errors})
+    return render(request, "course/send_password_reset.html", {"form": form})

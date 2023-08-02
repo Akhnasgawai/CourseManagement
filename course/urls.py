@@ -4,8 +4,13 @@ from . import views
 urlpatterns = [
     path("register/", views.register_view, name="register"),
     path("", views.login_view, name="login"),
+    # path(
+    #     "verify_otp/<str:username>/<str:role>/",
+    #     views.verify_otp_view,
+    #     name="verify_otp",
+    # ),
     path(
-        "verify_otp/<str:username>/<str:role>/",
+        "<str:path>/verify_otp/",
         views.verify_otp_view,
         name="verify_otp",
     ),
@@ -29,4 +34,6 @@ urlpatterns = [
     path("view-content/<uuid:course_id>/", views.view_content, name="view_content"),
     path("subscribed-course/", views.purchasedCourse, name="purchased_course"),
     path("success/", views.success, name="success"),
+    path("reset-password/", views.reset_password, name="reset_password"),
+    path("set-password/", views.set_password, name="set_password"),
 ]

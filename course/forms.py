@@ -111,3 +111,21 @@ class AddCourseContentForm(forms.Form):
         self.fields["course_id"].widget.attrs["class"] = "course_price"
         self.fields["course_id"].widget.attrs["placeholder"] = " "
         self.fields['course_id'].widget.attrs['disabled'] = True
+
+class ChangePasswordForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        password = self.data.get("password")
+        confirm_password = self.data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("Password and Confirm Password must match.")
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Add custom classes to input fields
+        self.fields["password"].widget.attrs["placeholder"] = " "
+        self.fields["confirm_password"].widget.attrs["placeholder"] = " "
