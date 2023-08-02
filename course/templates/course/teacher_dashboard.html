@@ -17,43 +17,35 @@
 		{% endif %}
         {% for course in courses %}
         <div>
-            <h3 class="course-title">{{ course.title }}</h3>
-            <p class="course-description">{{course.description}}</p>
-            <!-- <p class="course-tutor">@{{course.created_by.username}}</p> -->
-            <div class="amount">
-                <div>
+            <a href="{% url 'view_content' course.id %}" id="view-course">
+                <h3 class="course-title">{{ course.title }}</h3>
+                <p class="course-description">{{course.description}}</p>
+                <div class="amount">
                     <i class="material-icons">currency_rupee</i>
                     <p class="course-price">{{course.price}}</p>
                 </div>
-                <div class="add_content">
-                    <a href="{% url 'view_content' course.id %}">
-                        <div>
-                            <i class="fa-solid fa-book"></i>
-                            <h4>View Content</h4>
-                        </div>
-                    </a>
-                    <a href="{% url 'add_course' course.id %}">
-                        <div>
-                            <i class="fa-solid fa-pen"></i>
-                            <h4>Update Course</h4>
-                        </div>
-                    </a>
-                    <a href="{% url 'add_content' course.id %}">
-                        <div>
-                            <i class="fa-solid fa-plus"></i>
-                            <h4>Add Content</h4>
-                        </div>
-                    </a>
-                    <!-- href="{% url 'add_course' course.id %} -->
-                    <a onclick="showDeleteConfirmationModal('{{course.id}}', 'course')">
-                        <div>
-                            <i class="fa-solid fa-trash"></i>
-                            <h4>Delete Course</h4>
-                        </div>
-                    </a>
-                </div>
-                
-            </div>
+                    {% comment %} <div class="add_content">
+                        <a href="{% url 'add_course' course.id %}">
+                            <div>
+                                <i class="fa-solid fa-pen"></i>
+                                <h4>Update Course</h4>
+                            </div>
+                        </a>
+                        <a href="{% url 'add_content' course.id %}">
+                            <div>
+                                <i class="fa-solid fa-plus"></i>
+                                <h4>Add Content</h4>
+                            </div>
+                        </a>
+                        <!-- href="{% url 'add_course' course.id %} -->
+                        <a onclick="showDeleteConfirmationModal('{{course.id}}', 'course')">
+                            <div>
+                                <i class="fa-solid fa-trash"></i>
+                                <h4>Delete Course</h4>
+                            </div>
+                        </a>
+                    </div> {% endcomment %}
+            </a>
         </div>
         {% endfor %}
         <div id="deleteModal" class="modal">

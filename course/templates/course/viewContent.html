@@ -5,8 +5,23 @@
 <div class="main-container">
 	{% include 'course/navbar.html' %}
 	<div id="container">
-		<div>
+		<div id="course">
 			<h3 class="main-heading">{{ course_title }}</h3>
+			<div class="course-setting">
+				{% comment %} href="{% url 'add_content' content.id %}" {% endcomment %}
+				<a href="{% url 'add_content' course_id %}">
+					<div>
+						<i class="fa-solid fa-plus"></i>
+						<h4>Add Content</h4>
+					</div>
+				</a>
+				<a onclick="showDeleteConfirmationModal('{{course_id}}', 'course')">
+					<div>
+						<i class="fa-solid fa-trash"></i>
+						<h4>Delete Course</h4>
+					</div>
+				</a>
+			</div>
 		</div>
 		{% for content in course_contents %}
 		<!-- View course section -->
@@ -50,9 +65,6 @@
 					Buy
 				</a>
 			</div>
-			<script>
-				console.log("ENTERED")
-			</script>
 			<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 			<script>
 				var options = {

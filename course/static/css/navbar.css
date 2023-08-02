@@ -47,14 +47,12 @@ nav div ul li{
 }
 
 #search-box{
-    /* margin-left: 4px; */
-    gap: 10px;
-    justify-content: center;
+    display: flex;
+    justify-content: space-between;
 }
 
 .header-nav ul div #search{
-    padding: 10px 7px;
-    width: 80%;
+    padding: 9px 7px;
     background-color: #212121;
     border: none;
     border-radius: 4px;
@@ -70,13 +68,13 @@ nav div ul li{
 .header-nav ul div #search-btn{
     background-color: transparent;
     border: none;
-    padding: 7px 8px;
+    padding: 8px 8px;
     border-radius: 4px;
     background-color: #212121;
 }
 
 .header-nav ul div #search-btn i{
-    font-size: 20px;
+    font-size: 16px;
     color: #fff;
 }
 

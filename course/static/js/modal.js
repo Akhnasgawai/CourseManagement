@@ -15,6 +15,7 @@ function deleteItem() {
     course_id = window.courseId[1]
     closeDeleteConfirmationModal();
     if(window.courseId[0] === 'course'){
+        console.log("HI: ",course_id)
         closeDeleteConfirmationModal();
         window.location.href = `http://127.0.0.1:8000/delete-course/?course_id=${course_id}`
     }

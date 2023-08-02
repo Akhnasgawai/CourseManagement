@@ -12,23 +12,29 @@
 		<p class="empty-queryset">No courses to show</p>
 		{% endif %}
 		{% for course in courses %}
-		<div>
-			<h3 class="course-title">{{ course.title }}</h3>
-			<p class="course-description">{{course.description}}</p>
-			<p class="course-tutor">@{{course.created_by.username}}</p>
-			<div class="amount">
-				<div>
+		<div class="view-course-container">
+			<a id="view-course" href="{% url 'view_content' course.id %}">
+				<h3 class="course-title">{{ course.title }}</h3>
+				<p class="course-description">{{course.description}}</p>
+				<p class="course-tutor">@{{course.created_by.username}}</p>
+				<div class="amount">
 					<i class="material-icons">currency_rupee</i>
 					<p class="course-price">{{course.price}}</p>
 				</div>
-                <div
-                    id="subscribe"
-                >
-                    <a href="{% url 'view_content' course.id %}" id="subscribe-btn">
-                        View Course
-                    </a>
-                </div>
-			</div>
+				{% comment %} <div class="amount">
+					<div>
+						<i class="material-icons">currency_rupee</i>
+						<p class="course-price">{{course.price}}</p>
+					</div>
+					<div
+						id="subscribe"
+					>
+						<a href="{% url 'view_content' course.id %}" id="subscribe-btn">
+							View Course
+						</a>
+					</div>
+				</div> {% endcomment %}
+			</a>
 		</div>
 		{% endfor %}
 	</div>

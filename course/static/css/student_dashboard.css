@@ -18,7 +18,64 @@
     color: #fff;
 }
 
-#container > div .amount{
+#view-course{
+    cursor:pointer;
+    text-decoration: none;
+    pointer-events: auto;
+}
+
+#course{
+    display: flex;
+    justify-content: space-between;
+}
+
+.course-setting{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.course-setting a{
+    background-color: transparent;
+	padding: 8px 12px;
+	border-radius: 5px;
+	color: var(--primary-color);
+	border: none;
+	outline: 2px solid var(--border-color);
+	cursor: pointer;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	font-weight: 600;
+    font-size: 11px;
+    text-decoration: none;
+    transition: all 0.5s;
+}
+
+.course-setting a:hover{
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.course-setting a div{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.amount{
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+.amount i{
+    font-size: 16px;
+    color: #fff;
+}
+
+/* #container > div .amount{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,29 +87,9 @@
 #container div .amount .add_content a {
     text-decoration: none;
     color: #fff;
-}
+} */
 
-#container div .amount div{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-#container div .amount .add_content {
-    /* display: flex; */
-    gap: 10px;
-}
-
-#container div .amount .add_content a div{
-    gap: 5px;
-}
-
-#container div .amount div i{
-    color: #fff;
-    font-size: 14px;
-}
-
-#container div .amount div a, #container #checkout #rzp-button1{
+#container #checkout #rzp-button1{
     background-color: transparent;
 	padding: 8px 12px;
 	border-radius: 5px;

@@ -31,7 +31,7 @@ function toggleCollapse(){
         welcome.style.display = 'block';
         container.style.width = 'calc(100% - 290px)';
         container.style.marginLeft = '290px';
-        searchInput.style.display = 'block';
+        searchInput.style.display = 'flex';
         logoutBtn.style.display = 'block';
 
 

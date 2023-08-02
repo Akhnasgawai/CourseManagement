@@ -13,14 +13,16 @@
 		{% endif %}
 		{% for subscribed_course in subscribed_courses %}
 		<div>
-			<h3 class="course-title">{{ subscribed_course.courseId.title }}</h3>
-			<p class="course-description">{{subscribed_course.courseId.description}}</p>
-			<p class="course-tutor">@{{ subscribed_course.courseId.created_by.username }}</p>
-            <div id="purchased-btn-container">
+			<a id="view-course" href="{% url 'view_content' subscribed_course.courseId_id %}">
+				<h3 class="course-title">{{ subscribed_course.courseId.title }}</h3>
+				<p class="course-description">{{subscribed_course.courseId.description}}</p>
+				<p class="course-tutor">@{{ subscribed_course.courseId.created_by.username }}</p>
+			</a>
+            {% comment %} <div id="purchased-btn-container">
                 <a href="{% url 'view_content' subscribed_course.courseId_id %}" id="purchased-btn">
                     View Course
                 </a>
-            </div>
+            </div> {% endcomment %}
 		</div>
 		{% endfor %}
 	</div>

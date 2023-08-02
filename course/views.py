@@ -293,6 +293,7 @@ def add_course(request, course_id=None):
 @teacher_required
 def delete_course(request):
     course_id = request.GET.get('course_id')
+    print("COURSE ID", course_id)
     try:
         course = Course.objects.get(pk = course_id)
         course.delete()
@@ -333,6 +334,7 @@ def add_content(request, course_id=None, content_id=None):
             instance.content_link = request.POST['content_link']
             instance.save()
         else:
+            print("UPDATE STARTED")
             course_content_instance = CourseContent(
                 course_id = course_name,
                 content_title = request.POST['content_title'],
@@ -342,12 +344,11 @@ def add_content(request, course_id=None, content_id=None):
             course_content_instance.save()
             form = AddCourseContentForm()
         SubscribedStudents = SubscribedCourse.objects.filter(courseId_id = course_id)
-        subject = f'New Topic Alert: Expand Your Knowledge in {course_name}'
         for student in SubscribedStudents:
+            subject = f'New Topic Alert: Expand Your Knowledge in {course_name}'
             message = f'Hi {student.userId.username},\nWe are thrilled to inform you that there\'s a new addition to your purchased course, "{course_name}". Our dedicated instructors have just introduced a fascinating new topic titled "{request.POST["content_title"]}". As a valued student who has invested in your education with us, we believe this latest topic will be an exciting and valuable expansion to your existing knowledge.\n\nBest Regards,\nThe Course Academy Team.'
             email = student.userId.email
             send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)
-
         return redirect("teacher_dashboard")
     return render(request, "course/add_content.html", {"form":form})
 
@@ -428,10 +429,10 @@ def view_content(request, course_id):
         return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "payment":payment, "purchased": purchased, "key":os.environ.get("RAZOR_PAY_KEY_ID")})
     elif len(course_contents) > 0 and request.user.role == "teacher":
         print("teacher viewing")
-        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "purchased": purchased})
+        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "purchased": purchased, "course_id": course_id})
     else:
         print("student purchased")
-        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "purchased": purchased})
+        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "purchased": purchased, "course_id": course_id})
 
 @login_required
 @student_required
