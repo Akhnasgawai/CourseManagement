@@ -37,3 +37,8 @@ function toggleCollapse(){
 
     }
 }
+
+const toggleFilterMenu = () => {
+    const filterMenu = document.querySelector(".filter-menu");
+    filterMenu.classList.toggle("active-filter-menu")
+}

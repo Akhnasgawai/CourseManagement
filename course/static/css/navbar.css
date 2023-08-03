@@ -57,6 +57,7 @@ nav div ul li{
     border: none;
     border-radius: 4px;
     color: #fff;
+    width: 65%;
 }
 
 .header-nav ul div #search:focus{
@@ -65,7 +66,7 @@ nav div ul li{
     font-weight: bold;
 }
 
-.header-nav ul div #search-btn{
+.header-nav ul div #search-btn, .header-nav ul div #filter-btn{
     background-color: transparent;
     border: none;
     padding: 8px 8px;
@@ -74,6 +75,15 @@ nav div ul li{
 }
 
 .header-nav ul div #search-btn i{
+    font-size: 16px;
+    color: #fff;
+}
+
+.header-nav ul div #filter-btn{
+    padding: 6px 8px;
+}
+
+.header-nav ul div #filter-btn i{
     font-size: 16px;
     color: #fff;
 }
@@ -145,4 +155,46 @@ nav div ul li{
 
 .active{
     width: 72px;
+}
+
+.filter-menu{
+    min-width: max-content;
+    background-color: var(--backgroundColor);
+    padding: 5px 8px;
+    border-radius: 4px;
+    position: absolute;
+    left: 210px;
+    top: 90px;
+    display: none;
+    transition: all 0.5s ease-in-out;
+}
+
+.active-filter-menu{
+    display: block;
+}
+
+.filter-menu ul{
+    margin: 0;
+    padding: 0;
+}
+
+.filter-menu ul a{
+    text-decoration: none;
+}
+
+.filter-menu ul a li{
+    list-style: none;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: all 0.4s ease-in-out;
+}
+
+.filter-menu ul a li:hover{
+    color: #b8b8b8;
+}
+
+.filter-menu ul a:not(:last-child) li{
+    border-bottom: 1px solid #4a4a4a;
 }

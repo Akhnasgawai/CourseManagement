@@ -212,6 +212,14 @@ def student_dashboard(request):
     query = request.GET.get("query")
     if query is None:
         courses = Course.objects.all()
+    elif query == 'low-to-high':
+        courses = Course.objects.all().order_by('price')
+    elif query == 'high-to-low':
+        courses = Course.objects.all().order_by('-price')
+    elif query == 'newest':
+        courses = Course.objects.all().order_by('created_at')
+    elif query == 'highest-rated':
+        courses = Course.objects.all()
     else:
         coursesTitle = Course.objects.filter(title__icontains=query)
         coursesAuthor = Course.objects.filter(created_by__username__icontains=query)
