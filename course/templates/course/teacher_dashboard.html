@@ -21,30 +21,22 @@
                 <h3 class="course-title">{{ course.title }}</h3>
                 <p class="course-description">{{course.description}}</p>
                 <div class="amount">
-                    <i class="material-icons">currency_rupee</i>
-                    <p class="course-price">{{course.price}}</p>
-                </div>
-                    {% comment %} <div class="add_content">
-                        <a href="{% url 'add_course' course.id %}">
-                            <div>
-                                <i class="fa-solid fa-pen"></i>
-                                <h4>Update Course</h4>
-                            </div>
-                        </a>
-                        <a href="{% url 'add_content' course.id %}">
-                            <div>
-                                <i class="fa-solid fa-plus"></i>
-                                <h4>Add Content</h4>
-                            </div>
-                        </a>
-                        <!-- href="{% url 'add_course' course.id %} -->
-                        <a onclick="showDeleteConfirmationModal('{{course.id}}', 'course')">
-                            <div>
-                                <i class="fa-solid fa-trash"></i>
-                                <h4>Delete Course</h4>
-                            </div>
-                        </a>
-                    </div> {% endcomment %}
+					<div>
+						<i class="material-icons">currency_rupee</i>
+						<p class="course-price">{{course.price}}</p>
+					</div>
+					<div
+						id="ratings"
+					>
+						<ul class="rating-stars">
+							<li><i class="{% if course.average_rating > 0 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 1 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 2 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 3 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 4 %}fa {%else%}fa-regular{% endif %} fa-star"></i></li>
+						</ul>
+					</div>
+				</div>
             </a>
         </div>
         {% endfor %}

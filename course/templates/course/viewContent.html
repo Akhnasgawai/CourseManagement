@@ -1,4 +1,4 @@
-{% extends 'index.html' %} {% load static %} {% block student_css %}
+{% extends 'index.html' %} {% load static %}{% block student_css %}
 <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}" />
 <link rel="stylesheet" href="{% static 'css/modal.css' %}" />
 {% endblock %} {% block content %}
@@ -6,22 +6,24 @@
 	{% include 'course/navbar.html' %}
 	<div id="container">
 		<div id="course">
-			<h3 class="main-heading">{{ course_title }}</h3>
+			<h3 class="main-heading">{{ course.title }}</h3>
+			{% if request.user.role == "teacher" %}
 			<div class="course-setting">
 				{% comment %} href="{% url 'add_content' content.id %}" {% endcomment %}
-				<a href="{% url 'add_content' course_id %}">
+				<a href="{% url 'add_content' course.id %}">
 					<div>
 						<i class="fa-solid fa-plus"></i>
 						<h4>Add Content</h4>
 					</div>
 				</a>
-				<a onclick="showDeleteConfirmationModal('{{course_id}}', 'course')">
+				<a onclick="showDeleteConfirmationModal('{{course.id}}', 'course')">
 					<div>
 						<i class="fa-solid fa-trash"></i>
 						<h4>Delete Course</h4>
 					</div>
 				</a>
 			</div>
+			{% endif %}
 		</div>
 		{% for content in course_contents %}
 		<!-- View course section -->
@@ -49,7 +51,7 @@
 			<div>
 				<p class="course-title">{{ forloop.counter }}. {{ content.content_title }}</p>
 				<p class="course-description">{{content.content}}</p>
-				<p class="course-tutor">{{content.content_link}}</p>
+				<a href="{{content.content_link}}" target="_blank" class="course-tutor">{{content.content_link}}</a>
 			</div>
 			{% else %}
 			<div>
@@ -57,6 +59,18 @@
 			</div>
 			{% endif %}
 		{% endfor %}
+		{% if purchased and request.user.role == 'student' %}
+			<div class="ratings">
+				<p>Would you like to rate our course?</p>
+				<ul class="rating-stars">
+					<li onclick="rate(1,'{{course.id}}')"><i class="{% if user_rating > 0 %}fa{% else %}fa-regular{% endif %} fa-star"></i></li>
+					<li onclick="rate(2,'{{course.id}}')"><i class="{% if user_rating > 1 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+					<li onclick="rate(3,'{{course.id}}')"><i class="{% if user_rating > 2 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+					<li onclick="rate(4,'{{course.id}}')"><i class="{% if user_rating > 3 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+					<li onclick="rate(5,'{{course.id}}')"><i class="{% if user_rating > 4 %}fa {%else%}fa-regular{% endif %} fa-star"></i></li>
+				</ul>
+			</div>
+		{% endif %}
 		{% if purchased is False and request.user.role == 'student' %}
 			<div
 				id="checkout"
@@ -106,4 +120,5 @@
 	</div>
 </div>
 <script src="{% static 'js/modal.js' %}"></script>
+<script src="{% static 'js/ratings.js' %}"></script>
 {% endblock %}

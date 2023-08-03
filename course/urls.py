@@ -36,4 +36,5 @@ urlpatterns = [
     path("success/", views.success, name="success"),
     path("reset-password/", views.reset_password, name="reset_password"),
     path("set-password/", views.set_password, name="set_password"),
+    path("rating/<int:rating>/<uuid:course_id>/", views.course_ratings, name="course_rating"),
 ]

@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 import uuid
+from django.db.models import Avg
 
 
 # create your models here
@@ -50,6 +51,10 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def average_rating(self) -> float:
+        avg_rating = RatingCourse.objects.filter(course=self).aggregate(Avg("userRating"))
+        return avg_rating.get("userRating__avg", 0)
 
 class CourseContent(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -83,5 +88,22 @@ class SubscribedCourse(models.Model):
 
     def __str__(self):
         return self.userId.username
+
+class RatingCourse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    userRating = models.IntegerField(default=0)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=False
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        null=False
+    )
+
+    def __str__(self):
+        return f"{self.userRating}"
 
 

@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "course.apps.CourseConfig",
     "rest_framework",
-    "django.contrib.postgres"
+    "django.contrib.postgres",
 ]
 
 # REST framework settings

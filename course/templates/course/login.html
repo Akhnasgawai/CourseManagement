@@ -7,7 +7,7 @@
 {% block content %}
 <div class="login">
 	<h1>Login</h1>
-	<form class="login_form" method="post">
+	<form class="login_form" method="POST">
 		{% csrf_token %}
 			<div class="fieldWrapper">
 				{{ form.email }}

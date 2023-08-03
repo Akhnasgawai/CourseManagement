@@ -1,7 +1,7 @@
 {% extends 'index.html' %} {% load static %} {% block verify_otp_css %}
 <link rel="stylesheet" href="{% static 'css/verifyOtp.css' %}" />
 {% endblock %} {% block content %}
-<form id="otp-form" class="otp-form" method="post">
+<form id="otp-form" class="otp-form" method="POST">
 	{% csrf_token %}
 	<input type="hidden" id="otp" name="otp" required />
 	<!-- <div class="otp-container">

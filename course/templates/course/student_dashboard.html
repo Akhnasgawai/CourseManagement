@@ -17,23 +17,27 @@
 				<h3 class="course-title">{{ course.title }}</h3>
 				<p class="course-description">{{course.description}}</p>
 				<p class="course-tutor">@{{course.created_by.username}}</p>
-				<div class="amount">
+				{% comment %} <div class="amount">
 					<i class="material-icons">currency_rupee</i>
 					<p class="course-price">{{course.price}}</p>
-				</div>
-				{% comment %} <div class="amount">
+				</div> {% endcomment %}
+				<div class="amount">
 					<div>
 						<i class="material-icons">currency_rupee</i>
 						<p class="course-price">{{course.price}}</p>
 					</div>
 					<div
-						id="subscribe"
+						id="ratings"
 					>
-						<a href="{% url 'view_content' course.id %}" id="subscribe-btn">
-							View Course
-						</a>
+						<ul class="rating-stars">
+							<li><i class="{% if course.average_rating > 0 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 1 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 2 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 3 %}fa{%else%}fa-regular{% endif %} fa-star"></i></li>
+							<li><i class="{% if course.average_rating > 4 %}fa {%else%}fa-regular{% endif %} fa-star"></i></li>
+						</ul>
 					</div>
-				</div> {% endcomment %}
+				</div>
 			</a>
 		</div>
 		{% endfor %}

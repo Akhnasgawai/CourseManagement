@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
+from django.db.models import Avg
 from django.urls import reverse
 from django import forms
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm, ChangePasswordForm
-from .models import User, Course, SubscribedCourse, CourseContent
+from .models import User, Course, SubscribedCourse, CourseContent, RatingCourse
 from django.core.mail import send_mail
 from django.utils import timezone
 from .decorators import teacher_required, student_required, async_login_required
@@ -150,8 +151,6 @@ def set_password(request):
         print("PASSWORD: ",password)
         return redirect("/")
 
-
-
 def verify_otp_view(request, path):
     username = request.session.get("username")
     role = request.session.get("role")
@@ -218,8 +217,6 @@ def student_dashboard(request):
         courses = Course.objects.all().order_by('-price')
     elif query == 'newest':
         courses = Course.objects.all().order_by('created_at')
-    elif query == 'highest-rated':
-        courses = Course.objects.all()
     else:
         coursesTitle = Course.objects.filter(title__icontains=query)
         coursesAuthor = Course.objects.filter(created_by__username__icontains=query)
@@ -416,8 +413,14 @@ def view_subscribed_student(request):
 
 @login_required
 def view_content(request, course_id):
+    print(course_id)
     course = Course.objects.get(pk=course_id)
     course_contents = CourseContent.objects.filter(course_id_id = course_id)
+    user_rating = RatingCourse.objects.filter(course_id = course_id, user_id = request.user.id).first()
+    if user_rating:
+        user_rating = user_rating.userRating
+    else:
+        user_rating = 0
     try:
         purchased = SubscribedCourse.objects.get(courseId_id = course_id, userId_id = request.user.id, is_paid = True)
         purchased = True
@@ -434,13 +437,13 @@ def view_content(request, course_id):
             razor_pay_order_id = payment['id']
         )
         subscribed_course_instance.save()
-        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "payment":payment, "purchased": purchased, "key":os.environ.get("RAZOR_PAY_KEY_ID")})
+        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course":course, "payment":payment, "purchased": purchased, "key":os.environ.get("RAZOR_PAY_KEY_ID")})
     elif len(course_contents) > 0 and request.user.role == "teacher":
         print("teacher viewing")
-        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "purchased": purchased, "course_id": course_id})
+        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course":course, "purchased": purchased})
     else:
         print("student purchased")
-        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course_title":course.title, "purchased": purchased, "course_id": course_id})
+        return render(request, "course/viewContent.html", {"course_contents":course_contents, "course":course, "purchased": purchased, "user_rating":user_rating})
 
 @login_required
 @student_required
@@ -471,3 +474,15 @@ def reset_password(request):
             errors = "The email and role are not associated, please check your email and role"
             return render(request, "course/send_password_reset.html", {"form": form, "invalid_data": errors})
     return render(request, "course/send_password_reset.html", {"form": form})
+
+def course_ratings(request, rating, course_id):
+    course = Course.objects.get(pk = course_id)
+    RatingCourse.objects.filter(course = course, user = request.user).delete()
+    # course.rating_set.create(user=request.user, rating=rating)
+    RatingCourse.objects.create(userRating = rating, user = request.user, course = course)
+    print(course_id)
+    print(rating)
+    print(RatingCourse.objects.all())
+    print(course.average_rating())
+    url = reverse("view_content", args=[course_id])
+    return redirect(url)
