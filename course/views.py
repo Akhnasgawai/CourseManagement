@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.db.models import Avg
 from django.urls import reverse
 from django import forms
 from django.contrib.auth import login, authenticate, logout
@@ -7,19 +6,15 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm, ChangePasswordForm
 from .models import User, Course, SubscribedCourse, CourseContent, RatingCourse
-from django.core.mail import send_mail
 from django.utils import timezone
-from .decorators import teacher_required, student_required, async_login_required
+from .decorators import teacher_required, student_required
 from django.conf import settings
 from .tasks import send_email_task
 import random
 import razorpay
-import asyncio
-from asgiref.sync import sync_to_async
 from dotenv import load_dotenv
 import os
 load_dotenv()
-
 
 # create your views here
 def register_view(request):
@@ -31,7 +26,7 @@ def register_view(request):
             request.session["username"] = username
             request.session["role"] = role
             user = form.save()
-            generate_otp(user)
+            generate_otp(user) #generate otp for the current user
             url = reverse('verify_otp', args=["register"])
             return redirect(url)
         else:
@@ -50,10 +45,10 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             role = form.cleaned_data.get("role")
             try:
-                username = User.objects.get(email = email, role=role).username
+                username = User.objects.get(email = email, role=role).username #get the username if email and role exists in db
             except:
                 try:
-                    username = User.objects.get(email = email)
+                    username = User.objects.get(email = email) #get the email if the try block fails
                     errors[
                         "invalid_role"
                     ] = "Selected role not associated with this email"
@@ -63,25 +58,23 @@ def login_view(request):
                         {"form": form, "errors": errors},
                     )
                 except User.DoesNotExist:
-                    print("I'm raising error1")
                     errors[
                         "bad_credentials"
-                    ] = "Invalid Username / Password"
+                    ] = "Invalid Email / Password"
                     return render(
                         request,
                         "course/login.html",
                         {"form": form, "errors": errors},
                     )
-            print("try username: ",username)
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=username, password=password) #authenticate user with username and password
             if user is not None:
-                if user.role == role:
+                if user.role == role: #check for the user role
                     request.session["username"] = username
                     request.session["role"] = role
                     generate_otp(user)
                     url = reverse('verify_otp', args=["login"])
                     return redirect(url)
-                else:
+                else: #raise an error if invalid role is selected
                     errors[
                         "invalid_role"
                     ] = "Selected role not associated with this email"
@@ -90,9 +83,8 @@ def login_view(request):
                         "course/login.html",
                         {"form": form, "errors": errors},
                     )
-            else:
-                print("I'm raising error2")
-                errors["bad_credentials"] = "Invalid Username / Password"
+            else: # raise the error if either username or password is incorrect
+                errors["bad_credentials"] = "Invalid Email / Password"
                 return render(
                     request,
                     "course/login.html",
@@ -111,21 +103,21 @@ def login_view(request):
     return render(request, "course/login.html", {"form": form, "errors": errors})
 
 def resend_otp(request):
-    username = request.session.get("username")
-    user = User.objects.get(username = username)
-    generate_otp(user)
+    username = request.session.get("username") #get the username from the session
+    user = User.objects.get(username = username) # get the user with the username
+    generate_otp(user) #generate otp for that user
     url = reverse('verify_otp', args=["login"])
     return redirect(url) 
 
 def generate_otp(user):
-    otp = str(random.randint(100000, 999999))
+    otp = str(random.randint(100000, 999999)) #generate 6 digit otp
     user.otp = otp
     user.otp_created_at = timezone.now()
-    user.save()
+    user.save() #save the otp and otp created time in user model
     email = user.email
     subject = "Your OTP for Two-Factor Authentication"
     message = f"Your OTP for login is: {otp} \n valid till 5 minutes"
-    send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)
+    send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email) # send otp to user's email
 
 def set_password(request):
     username = request.session.get("username")
@@ -369,25 +361,20 @@ def delete_content(request):
         return redirect("teacher_dashboard")
     return redirect("teacher_dashboard")
 
-# @async_login_required
-# @student_required
+@login_required
+@student_required
 def success(request):
     order_id = request.GET.get('order_id')
-    print(order_id)
-    # subscribed = await sync_to_async(SubscribedCourse.objects.get)(razor_pay_order_id = order_id)
     subscribed = SubscribedCourse.objects.get(razor_pay_order_id = order_id)
     subscribed.is_paid = True
     subscribed.razor_pay_payment_id = request.GET.get('payment_id')
     subscribed.razor_pay_payment_signature = request.GET.get('razorpay_signature')
-    # await sync_to_async(subscribed.save)()
     subscribed.save()
 
-    # student_email = await sync_to_async(lambda: request.user.email)()
     student_email = request.user.email
     subject_student = "Thank You for Your Purchase"
     message_student = f"Congratulations on your successful purchase! Your payment has been processed. \n Please find below the details to access your purchase: \n Order ID: {order_id} \n Purchased Date: {subscribed.subscribed_at}. \n\n Best regards, \n Course Academy"
 
-    # course_title = await sync_to_async(lambda: subscribed.courseId.title)()
     course_title = subscribed.courseId.title
     teacher_username = subscribed.courseId.created_by.username
     teacher_email = subscribed.courseId.created_by.email
@@ -450,7 +437,6 @@ def view_content(request, course_id):
 def purchasedCourse(request):
     print("user: ",request.user.id)
     subscribed_courses = SubscribedCourse.objects.filter(userId_id = request.user.id, is_paid = True)
-    print(subscribed_courses)
     return render(request, "course/purchased_courses.html", {"subscribed_courses":subscribed_courses})
 
 def reset_password(request):
@@ -475,6 +461,8 @@ def reset_password(request):
             return render(request, "course/send_password_reset.html", {"form": form, "invalid_data": errors})
     return render(request, "course/send_password_reset.html", {"form": form})
 
+@login_required
+@student_required
 def course_ratings(request, rating, course_id):
     course = Course.objects.get(pk = course_id)
     RatingCourse.objects.filter(course = course, user = request.user).delete()

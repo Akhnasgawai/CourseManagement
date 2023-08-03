@@ -24,15 +24,3 @@ def student_required(view_func):
             return HttpResponseForbidden("Access Forbidden")
     
     return _wrapped_view
-
-from django.contrib.auth.decorators import user_passes_test
-
-def async_login_required(view_func):
-    @wraps(view_func)
-    async def _wrapped_view(request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return await view_func(request, *args, **kwargs)
-        else:
-            # Handle unauthorized access here (e.g., redirect to login page)
-            return HttpResponseForbidden("Access Forbidden")
-    return _wrapped_view
