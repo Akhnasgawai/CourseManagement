@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm, ChangePasswordForm
 from .models import User, Course, SubscribedCourse, CourseContent, RatingCourse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from .decorators import teacher_required, student_required
 from django.conf import settings
@@ -45,10 +46,10 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             role = form.cleaned_data.get("role")
             try:
-                username = User.objects.get(email = email, role=role).username #get the username if email and role exists in db
+                username = User.objects.get(email = email, role=role).username # get the username if email and role exists in db
             except:
                 try:
-                    username = User.objects.get(email = email) #get the email if the try block fails
+                    username = User.objects.get(email = email) # get the email if the try block fails
                     errors[
                         "invalid_role"
                     ] = "Selected role not associated with this email"
@@ -126,7 +127,6 @@ def set_password(request):
         try:
             form.clean()
             password = form.data.get("password")
-            print("PASSWORD: ",password)
             password = make_password(password, hasher='default')
             user = User.objects.get(username=username)
             user.password = password
@@ -137,11 +137,6 @@ def set_password(request):
             errors = " "
             errors = errors.join(e)
             return render(request, "course/reset_password.html", {"form": form, "errors": errors})
-        if form.errors:
-            return render(request, "course/reset_password.html", {"form": form, "errors": errors})
-        password = request.POST["password"]
-        print("PASSWORD: ",password)
-        return redirect("/")
 
 def verify_otp_view(request, path):
     username = request.session.get("username")
@@ -162,7 +157,8 @@ def verify_otp_view(request, path):
                 if path == 'login':
                 # Perform login or redirect to the dashboard if path is login or register
                     login(request, user)
-                    if role == "student":
+                    # redirect based on role
+                    if role == "student": 
                         return redirect("student_dashboard")
                     else:
                         return redirect("teacher_dashboard")
@@ -202,18 +198,28 @@ def logout_view(request):
 def student_dashboard(request):
     query = request.GET.get("query")
     if query is None:
-        courses = Course.objects.all()
+        courses_set = Course.objects.all()
     elif query == 'low-to-high':
-        courses = Course.objects.all().order_by('price')
+        courses_set = Course.objects.all().order_by('price')
     elif query == 'high-to-low':
-        courses = Course.objects.all().order_by('-price')
+        courses_set = Course.objects.all().order_by('-price')
     elif query == 'newest':
-        courses = Course.objects.all().order_by('created_at')
+        courses_set = Course.objects.all().order_by('created_at')
     else:
         coursesTitle = Course.objects.filter(title__icontains=query)
         coursesAuthor = Course.objects.filter(created_by__username__icontains=query)
         coursesDescription = Course.objects.filter(description__icontains=query)
-        courses = coursesTitle | coursesAuthor | coursesDescription
+        courses_set = coursesTitle | coursesAuthor | coursesDescription
+    paginator = Paginator(courses_set, 3)  # Show 10 courses per page.
+    page_number = request.GET.get("page", 1)
+    try:
+        courses = paginator.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        courses = paginator.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        courses = paginator.page(paginator.num_pages)
     return render(
             request,
             "course/student_dashboard.html",

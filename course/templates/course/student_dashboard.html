@@ -5,7 +5,7 @@
 	{% include 'course/navbar.html' %}
 	<div id="container">
 		<div class="heading">
-			<h1 class="main-heading">Student Dashboard</h1>
+			<h1 class="main-heading">Student Dashboard {{ course_page }} </h1>
 		</div>
 		<!-- View course section -->
 		{% if courses|length < 1 %}
@@ -17,10 +17,6 @@
 				<h3 class="course-title">{{ course.title }}</h3>
 				<p class="course-description">{{course.description}}</p>
 				<p class="course-tutor">@{{course.created_by.username}}</p>
-				{% comment %} <div class="amount">
-					<i class="material-icons">currency_rupee</i>
-					<p class="course-price">{{course.price}}</p>
-				</div> {% endcomment %}
 				<div class="amount">
 					<div>
 						<i class="material-icons">currency_rupee</i>
@@ -41,7 +37,39 @@
 			</a>
 		</div>
 		{% endfor %}
-	</div>
-    
+		{% if courses.has_other_pages %}
+		<div class="pagination">
+			{% if courses.has_previous %}
+				{% if "query" in request.get_full_path|lower %}
+					<p><a href="{{request.get_full_path}}&page={{ courses.previous_page_number }}">&laquo;</a></p>
+				{% else %}
+					<p><a href="?page={{ courses.previous_page_number }}">&laquo;</a></p>
+				{% endif %}
+			{% else %}
+				<p class="disabled"><span>&laquo;</span></p>
+			{% endif %}
+			{% for i in courses.paginator.page_range %}
+				{% if courses.number == i %}
+					<p class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></p>
+				{% else %}
+					{% if "query" in request.get_full_path|lower %}
+						<p><a href="{{request.get_full_path}}&page={{ i }}">{{ i }}</a></p>
+					{% else %}
+						<p><a href="?page={{ i }}">{{ i }}</a></p>
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+			{% if courses.has_next %}
+				{% if "query" in request.get_full_path|lower %}
+					<p><a href="{{request.get_full_path}}&page={{ courses.next_page_number }}">&raquo;</a></p>
+				{% else %}
+					<p><a href="?page={{ courses.next_page_number }}">&raquo;</a></p>
+				{% endif %}
+			{% else %}
+				<p class="disabled"><span>&raquo;</span></p>
+			{% endif %}
+		</div>
+		{% endif %}
+	</div> 
 </div>
 {% endblock %}
