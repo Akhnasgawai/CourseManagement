@@ -17,8 +17,10 @@ django-model-utils==4.3.1
 django4-background-tasks==1.2.7
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
+gunicorn==21.2.0
 idna==3.4
 kombu==5.3.1
+packaging==23.1
 prompt-toolkit==3.0.39
 psycopg2==2.9.6
 psycopg2-binary==2.9.6
