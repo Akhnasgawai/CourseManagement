@@ -13,6 +13,13 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.autodiscover_tasks()
 
+# Set the Redis URL for Celery to use as the message broker.
+app.conf.broker_url = 'redis://red-cj6eai2cn0vc739mu980:6379/0'
+
+# Set the result backend for Celery (Optional, but recommended)
+# For example, using Redis as the result backend:
+app.conf.result_backend = 'redis://red-cj6eai2cn0vc739mu980:6379/1'
+
 @app.task(bind=True)
 def debug_task(self):
     print(f"Request: {self.request!r}")
