@@ -14,6 +14,7 @@ from .tasks import send_email_task
 import random
 import razorpay
 from dotenv import load_dotenv
+from django.core.mail import send_mail
 import os
 load_dotenv()
 
@@ -118,7 +119,12 @@ def generate_otp(user):
     email = user.email
     subject = "Your OTP for Two-Factor Authentication"
     message = f"Your OTP for login is: {otp} \n valid till 5 minutes"
-    send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email) # send otp to user's email
+    print("OTP: ", otp)
+    # try:
+    #     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+    # except Exception as e:
+    #     print(str(e))
+    # send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email) # send otp to user's email
 
 def set_password(request):
     username = request.session.get("username")
@@ -288,7 +294,8 @@ def add_course(request, course_id=None):
                 for student in students:
                     message = f"Hi {student.userId.username}, We are excited to bring some fantastic news your way. One of our esteemed authors, {request.user.username}, has just launched a brand new course, titled '{form.cleaned_data['title']}'. As a student who has demonstrated a strong passion for learning, we wanted to personally inform you about this valuable addition to our course catalog.\n\nBest Regards,\n\nThe Course Academy Team."
                     email = student.userId.email
-                    send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)           
+                    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+                    # send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)           
         return redirect("teacher_dashboard")
     return render(request, "course/add_course.html", context)
 
@@ -351,7 +358,8 @@ def add_content(request, course_id=None, content_id=None):
             subject = f'New Topic Alert: Expand Your Knowledge in {course_name}'
             message = f'Hi {student.userId.username},\nWe are thrilled to inform you that there\'s a new addition to your purchased course, "{course_name}". Our dedicated instructors have just introduced a fascinating new topic titled "{request.POST["content_title"]}". As a valued student who has invested in your education with us, we believe this latest topic will be an exciting and valuable expansion to your existing knowledge.\n\nBest Regards,\nThe Course Academy Team.'
             email = student.userId.email
-            send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+            # send_email_task.delay(subject, message, settings.DEFAULT_FROM_EMAIL, email)
         return redirect("teacher_dashboard")
     return render(request, "course/add_content.html", {"form":form})
 
@@ -386,9 +394,10 @@ def success(request):
     teacher_email = subscribed.courseId.created_by.email
     subject_teacher = "Course Purchase Notification"
     message_teacher = f'Dear {teacher_username},\n\nYour course "{course_title}" has been purchased by a user on our website. Congratulations!\n\nBest regards,\nCourse Academy'
-
-    send_email_task.delay(subject_student, message_student, settings.DEFAULT_FROM_EMAIL, student_email)
-    send_email_task.delay(subject_teacher, message_teacher, settings.DEFAULT_FROM_EMAIL, teacher_email)
+    send_mail(subject_student, message_student, settings.DEFAULT_FROM_EMAIL, [student_email])
+    send_mail(subject_teacher, message_teacher, settings.DEFAULT_FROM_EMAIL, [teacher_email])
+    # send_email_task.delay(subject_student, message_student, settings.DEFAULT_FROM_EMAIL, student_email)
+    # send_email_task.delay(subject_teacher, message_teacher, settings.DEFAULT_FROM_EMAIL, teacher_email)
 
     return render(request, "course/success.html")
 
@@ -421,8 +430,11 @@ def view_content(request, course_id):
         purchased = False
     if (len(course_contents) > 0  and not purchased and request.user.role == "student"):
         print('student purchasing')
+        print("KEY ID: ", settings.RAZORPAYKEY)
+        print("KEY SECRET: ", settings.RAZORPAYSECRET)
         client = razorpay.Client(auth = (settings.RAZORPAYKEY, settings.RAZORPAYSECRET))  
         data = {'amount': course.price * 100, 'currency': 'INR', 'payment_capture': 1}
+        print("DATA: ", data)
         payment = client.order.create(data=data)
         subscribed_course_instance = SubscribedCourse(
             courseId = course,
