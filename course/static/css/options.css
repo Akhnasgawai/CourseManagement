@@ -1,0 +1,16 @@
+.option_list{
+    display: flex;
+    gap: 30px;
+}
+
+.option-field {
+    margin-bottom: 10px; /* Add margin between option fields */
+}
+
+.option-checkbox {
+    margin-left: 20px; /* Add margin to align checkboxes with option fields */
+}
+
+.option-checkbox label {
+    font-weight: normal; /* Reduce the font weight of the checkbox label */
+}

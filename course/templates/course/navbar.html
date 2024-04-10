@@ -41,6 +41,12 @@
 							<h4>View Students</h4>
 						</div>
 					</a>
+					<a href="{% url 'register' %}">
+						<div>
+							<i class="fa-solid fa-user"></i>
+							<h4>Add Students</h4>
+						</div>
+					</a>
 				{% else %}
 					<a href="{% url 'student_dashboard' %}">
 						<div class="active-tab">

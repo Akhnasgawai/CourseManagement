@@ -1,0 +1,18 @@
+{% extends 'index.html' %} {% load static %}{% block student_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" type="text/css" type="text/css" href="{% static 'css/modal.css' %}" />
+<link rel="stylesheet" type="text/css" type="text/css" href="{% static 'css/take_quiz.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<div id="course">
+			<h3 class="main-heading">Quiz Score</h3>
+        </div>
+        <div>
+            <p>You've already submitted the quiz</p>
+            <p>You have scored {{ score }} out of {{ total_questions }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

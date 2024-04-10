@@ -39,6 +39,11 @@ urlpatterns = [
     path("reset-password/", views.reset_password, name="reset_password"),
     path("set-password/", views.set_password, name="set_password"),
     path("rating/<int:rating>/<uuid:course_id>/", views.course_ratings, name="course_rating"),
+    path('add_quiz/<uuid:course_id>/', views.add_quiz, name='add_quiz'),
+    path('update_quiz/<uuid:quiz_id>/', views.add_quiz, name='update_quiz'),
+    path('quiz_detail/<uuid:quiz_id>/', views.add_question, name='quiz_detail'),
+    path('course_quizzes/<uuid:course_id>/', views.course_quizzes, name='course_quizzes'),
+    path('take_quiz/<uuid:quiz_id>/', views.take_quiz, name='take_quiz'),
 ]
 
 if settings.DEBUG:

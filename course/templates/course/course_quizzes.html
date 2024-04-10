@@ -1,0 +1,29 @@
+{% extends 'index.html' %} {% load static %}{% block student_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" type="text/css" type="text/css" href="{% static 'css/modal.css' %}" />
+<link rel="stylesheet" type="text/css" type="text/css" href="{% static 'css/course_quizzes.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<div id="course">
+			<h3 class="main-heading">{{ course.title }} Quizzes</h3>
+        </div>
+        {% if quizzes %}
+            {% for quiz in quizzes %}
+                <div id="course-cards">
+                    <p>{{ quiz.title }}</p>
+                    <a href="{% url 'take_quiz' quiz.id %}">
+                        <div class="start-quiz-btn">
+                            <h4>Start Quiz</h4>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No quizzes found for this course.</p>
+        {% endif %}
+    </div>
+    </div>
+</div>
+{% endblock %}

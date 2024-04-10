@@ -1,0 +1,32 @@
+{% extends 'index.html' %} {% load static %}{% block student_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" type="text/css" type="text/css" href="{% static 'css/modal.css' %}" />
+<link rel="stylesheet" type="text/css" type="text/css" href="{% static 'css/take_quiz.css' %}" />
+{% endblock %} {% block content %}
+<div class="main-container">
+	{% include 'course/navbar.html' %}
+	<div id="container">
+		<div id="course">
+			<h3 class="main-heading">{{ quiz.title }} Quizzes</h3>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            {% for question in questions %}
+                <div class="question">
+                    <h2>{{ question.text }}</h2>
+                    <div class="options">
+                        {% for option in question.option_set.all %}
+                            <label>
+                                <input type="radio" name="question_{{ question.id }}" value="{{ option.id }}" id="option_{{ option.id }}">
+                                {{ option.text }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            <button class="quiz-submit" type="submit">Submit Quiz</button>
+        </form>
+    </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'index.html' %} 
+{% load static %}
+{% block student_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/student_dashboard.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/register.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/options.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="main-container">
+    {% include 'course/navbar.html' %}
+    <div id="container">
+        <div>
+            <h1 class="main-heading">{{quiz.title}}</h1>
+        </div>
+        <form class="register_form" method="POST">
+            {% csrf_token %}
+            <div class="fieldWrapper">
+                {{ question_form.text }}
+                <label for="{{ question_form.text.id_for_label }}">Question</label>
+            </div>
+            {{ option_formset.management_form }}
+            {% for form in option_formset %}
+            <div class="fieldWrapper">
+            {% comment %} {{ form.text.label_tag }} {% endcomment %}
+            {{ form.text }}
+            {{form.text.label_tag}}
+            </div>
+            <div class="option-checkbox">
+                {{ form.is_correct.label_tag }}
+                {{ form.is_correct }}
+            </div>
+        {% endfor %}
+            <button type="submit">Add Question</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

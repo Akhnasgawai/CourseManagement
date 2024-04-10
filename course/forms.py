@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.forms import inlineformset_factory
+from .models import User, Course, CourseContent, Quiz, Question, Option
 from .models import User, Course, CourseContent
 
 
@@ -129,3 +131,54 @@ class ChangePasswordForm(forms.Form):
         # Add custom classes to input fields
         self.fields["password"].widget.attrs["placeholder"] = " "
         self.fields["confirm_password"].widget.attrs["placeholder"] = " "
+
+class QuizForm(forms.ModelForm):
+    title = forms.CharField(max_length=50, label="Title")
+    description = forms.CharField(max_length=200, label="Description")
+
+    class Meta:
+        model = Quiz
+        fields = ("title", "description")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Add custom classes to input fields
+        self.fields["title"].widget.attrs["class"] = "quiz_title"
+        self.fields["title"].widget.attrs["placeholder"] = " "
+        self.fields["description"].widget.attrs["class"] = "quiz_description"
+        self.fields["description"].widget.attrs["placeholder"] = " "
+
+class QuestionForm(forms.ModelForm):
+
+    text = forms.CharField(label="Question")
+
+    class Meta:
+        model = Question
+        fields = ['text']  # Add fields for the question text
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Add custom classes to input fields
+        self.fields["text"].widget.attrs["class"] = "quiz_question"
+        self.fields["text"].widget.attrs["placeholder"] = " "
+
+class OptionForm(forms.ModelForm):
+
+    text = forms.CharField(max_length=50, label="Option")
+
+    class Meta:
+        model = Option
+        fields = ['text', 'is_correct']
+        labels = {
+            'text' : 'Option'
+        }
+
+    widgets = {
+        'text': forms.TextInput(attrs={'class': 'option-form-control'}),  # Apply custom class to option text field
+        'is_correct': forms.CheckboxInput(attrs={'class': 'form-check-input'}),  # Apply custom class to checkbox
+    }
+
+def get_option_formset(extra=4, max_num=4):
+    return inlineformset_factory(Question, Option, form=OptionForm, extra=extra, max_num=max_num, can_delete=False)

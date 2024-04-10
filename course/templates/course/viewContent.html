@@ -7,13 +7,25 @@
 	<div id="container">
 		<div id="course">
 			<h3 class="main-heading">{{ course.title }}</h3>
-			{% if request.user.role == "teacher" %}
 			<div class="course-setting">
+				<a href="{% url 'course_quizzes' course.id %}">
+					<div>
+						<i class="fa-solid fa-plus"></i>
+						<h4>Take Quiz</h4>
+					</div>
+				</a>
 				{% comment %} href="{% url 'add_content' content.id %}" {% endcomment %}
+				{% if request.user.role == "teacher" %}
 				<a href="{% url 'add_content' course.id %}">
 					<div>
 						<i class="fa-solid fa-plus"></i>
 						<h4>Add Content</h4>
+					</div>
+				</a>
+				<a href="{% url 'add_quiz' course.id %}">
+					<div>
+						<i class="fa-solid fa-plus"></i>
+						<h4>Add Quiz</h4>
 					</div>
 				</a>
 				<a onclick="showDeleteConfirmationModal('{{course.id}}', 'course')">
@@ -22,8 +34,8 @@
 						<h4>Delete Course</h4>
 					</div>
 				</a>
+				{% endif %}
 			</div>
-			{% endif %}
 		</div>
 		{% for content in course_contents %}
 		<!-- View course section -->

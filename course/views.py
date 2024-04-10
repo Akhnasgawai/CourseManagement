@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django import forms
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm, ChangePasswordForm
-from .models import User, Course, SubscribedCourse, CourseContent, RatingCourse
+from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourseContentForm, ChangePasswordForm, QuizForm, QuestionForm, OptionForm, get_option_formset
+from .models import User, Course, SubscribedCourse, CourseContent, RatingCourse, Quiz, UserResponse, ResponseAnswer, Option, Question
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from .decorators import teacher_required, student_required
@@ -25,12 +25,13 @@ def register_view(request):
         if form.is_valid():
             username = form.cleaned_data.get("username")
             role = form.cleaned_data.get("role")  # Store the role in the session
-            request.session["username"] = username
-            request.session["role"] = role
+            # request.session["username"] = username
+            # request.session["role"] = role
             user = form.save()
-            generate_otp(user) #generate otp for the current user
-            url = reverse('verify_otp', args=["register"])
-            return redirect(url)
+            return redirect("register")
+            # generate_otp(user) #generate otp for the current user
+            # url = reverse('verify_otp', args=["register"])
+            # return redirect(url)
         else:
             errors = form.errors
     else:
@@ -71,11 +72,17 @@ def login_view(request):
             user = authenticate(request, username=username, password=password) #authenticate user with username and password
             if user is not None:
                 if user.role == role: #check for the user role
-                    request.session["username"] = username
-                    request.session["role"] = role
-                    generate_otp(user)
-                    url = reverse('verify_otp', args=["login"])
-                    return redirect(url)
+                    login(request, user)
+                    # redirect based on role
+                    if role == "student": 
+                        return redirect("student_dashboard")
+                    else:
+                        return redirect("teacher_dashboard")
+                    # request.session["username"] = username
+                    # request.session["role"] = role
+                    # generate_otp(user)
+                    # url = reverse('verify_otp', args=["login"])
+                    # return redirect(url)
                 else: #raise an error if invalid role is selected
                     errors[
                         "invalid_role"
@@ -492,3 +499,77 @@ def course_ratings(request, rating, course_id):
     print(course.average_rating())
     url = reverse("view_content", args=[course_id])
     return redirect(url)
+
+@login_required
+@teacher_required
+def add_quiz(request, course_id=None, quiz_id=None):
+
+    course = get_object_or_404(Course, pk=course_id)
+
+    if request.method == 'POST':
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            quiz = form.save(commit=False)
+            quiz.course = course
+            try:
+                quiz.save()
+            except Exception as e:
+                print(str(e))
+            return redirect('quiz_detail', quiz_id=quiz.id)  # Redirect to quiz detail page
+    else:
+        form = QuizForm()
+    return render(request, 'course/add_quiz.html', {'form': form})
+
+@login_required
+@teacher_required
+def add_question(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    OptionFormSet = get_option_formset()
+    if request.method == 'POST':
+        question_form = QuestionForm(request.POST)
+        option_formset = OptionFormSet(request.POST)
+        if question_form.is_valid() and option_formset.is_valid():
+            question = question_form.save(commit=False)
+            question.quiz = quiz
+            question.save()
+            option_formset.instance = question
+            option_formset.save()
+            return redirect('quiz_detail', quiz_id=quiz.id)
+    else:
+        question_form = QuestionForm()
+        option_formset = OptionFormSet()
+    return render(request, 'course/quiz_detail.html', {'quiz': quiz, 'question_form': question_form, 'option_formset': option_formset})
+
+def course_quizzes(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    quizzes = course.quiz_set.all()  # Retrieve all quizzes associated with the course
+    return render(request, 'course/course_quizzes.html', {'course': course, 'quizzes': quizzes})
+
+def take_quiz(request, quiz_id):
+    submitted_quiz = UserResponse.objects.filter(user=request.user,quiz=quiz_id).first()
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    questions = Question.objects.filter(quiz=quiz)
+    total_questions = questions.count()
+
+    if submitted_quiz:
+        return render(request, 'course/quiz_result.html',  {'quiz': quiz, 'score': int(submitted_quiz.score), 'total_questions': total_questions})
+
+
+    if request.method == 'POST':
+        correct_answers = 0
+
+        user_response = UserResponse.objects.create(user=request.user, quiz=quiz)
+        
+        for question in questions:
+            selected_option_id = request.POST.get(f'question_{question.id}', None)
+            if selected_option_id:
+                selected_option = get_object_or_404(Option, id=selected_option_id)
+                if selected_option.is_correct:
+                    correct_answers += 1
+                response_answer = ResponseAnswer.objects.create(user_response=user_response, question=question, selected_option=selected_option)
+        user_response.score = correct_answers
+        user_response.save()
+
+        return render(request, 'course/quiz_result.html', {'quiz': quiz, 'score': correct_answers})  # Redirect to a view that shows quiz results
+    
+    return render(request, 'course/take_quiz.html', {'quiz': quiz, 'questions': questions})
