@@ -26,7 +26,7 @@
 					<a href="{% url 'teacher_dashboard' %}">
 						<div class="active-tab">
 							<i class="fa-solid fa-table"></i>
-							<h4>All Courses</h4>
+							<h4>Your Courses</h4>
 						</div>
 					</a>
 					<a href="{% url 'add_course' %}">
@@ -47,7 +47,7 @@
 							<h4>Add Students</h4>
 						</div>
 					</a>
-				{% else %}
+				{% elif user.role == 'student' %}
 					<a href="{% url 'student_dashboard' %}">
 						<div class="active-tab">
 							<i class="fa-solid fa-plus"></i>
@@ -58,6 +58,19 @@
 						<div>
 							<i class="fa-solid fa-table"></i>
 							<h4>Purchased Course</h4>
+						</div>
+					</a>
+				{% else %}
+					<a href="{% url 'admin_dashboard' %}">
+						<div class="active-tab">
+							<i class="fa-solid fa-plus"></i>
+							<h4>All Course</h4>
+						</div>
+					</a>
+					<a href="{% url 'register' %}">
+						<div class="active-tab">
+							<i class="fa-solid fa-user"></i>
+							<h4>Add User</h4>
 						</div>
 					</a>
 				{% endif %}

@@ -13,7 +13,7 @@ from django.db.models import Avg
 # create your models here
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField(max_length=120)
+    email = models.EmailField(max_length=120, unique=True)
     username = models.CharField(unique=True, max_length=120)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -22,12 +22,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = (
         ("student", "Student"),
         ("teacher", "Teacher"),
+        ("admin", "Admin"),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="student")
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
 

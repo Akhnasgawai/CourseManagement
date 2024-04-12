@@ -24,6 +24,7 @@ urlpatterns = [
     path("resend_otp/", views.resend_otp, name="resend_otp"),
     path("logout/", views.logout_view, name="logout"),
     path("student_dashboard/", views.student_dashboard, name="student_dashboard"),
+    path("admin_dashboard/", views.admin_dashboard, name="admin_dashboard"),
     path("search/", views.student_dashboard, name="search"),
     path("all-courses/", views.teacher_dashboard, name="teacher_dashboard"),
     path("add-course/", views.add_course, name="add_course"),

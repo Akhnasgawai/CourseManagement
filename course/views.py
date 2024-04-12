@@ -8,7 +8,7 @@ from .forms import UserRegistrationForm, UserLoginForm, AddCourseForm, AddCourse
 from .models import User, Course, SubscribedCourse, CourseContent, RatingCourse, Quiz, UserResponse, ResponseAnswer, Option, Question
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
-from .decorators import teacher_required, student_required
+from .decorators import teacher_required, student_required, admin_required
 from django.conf import settings
 from .tasks import send_email_task
 import random
@@ -19,6 +19,8 @@ import os
 load_dotenv()
 
 # create your views here
+@login_required
+@admin_required
 def register_view(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -48,10 +50,10 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             role = form.cleaned_data.get("role")
             try:
-                username = User.objects.get(email = email, role=role).username # get the username if email and role exists in db
+                user = User.objects.get(email = email, role=role) # get the username if email and role exists in db
             except:
                 try:
-                    username = User.objects.get(email = email) # get the email if the try block fails
+                    user = User.objects.get(email = email) # get the email if the try block fails
                     errors[
                         "invalid_role"
                     ] = "Selected role not associated with this email"
@@ -69,15 +71,17 @@ def login_view(request):
                         "course/login.html",
                         {"form": form, "errors": errors},
                     )
-            user = authenticate(request, username=username, password=password) #authenticate user with username and password
+            user = authenticate(request, email=email, password=password) #authenticate user with username and password
             if user is not None:
                 if user.role == role: #check for the user role
                     login(request, user)
                     # redirect based on role
                     if role == "student": 
                         return redirect("student_dashboard")
-                    else:
+                    elif role == 'teacher':
                         return redirect("teacher_dashboard")
+                    else:
+                        return redirect("admin_dashboard")
                     # request.session["username"] = username
                     # request.session["role"] = role
                     # generate_otp(user)
@@ -245,22 +249,32 @@ def student_dashboard(request):
 @teacher_required
 def teacher_dashboard(request):
     courses = Course.objects.filter(created_by_id=request.user.id)
-    form = AddCourseForm()
-    if request.method == "POST":
-        form = AddCourseForm(request.POST)
-        if form.is_valid():
-            course_instance = Course(
-                title=form.cleaned_data["title"],
-                description=form.cleaned_data["description"],
-                price=form.cleaned_data["price"],
-                # Add other fields from the form as needed
-                created_by=request.user,
-            )
-            course_instance.save()
+    # form = AddCourseForm()
+    # if request.method == "POST":
+    #     form = AddCourseForm(request.POST)
+    #     if form.is_valid():
+    #         course_instance = Course(
+    #             title=form.cleaned_data["title"],
+    #             description=form.cleaned_data["description"],
+    #             price=form.cleaned_data["price"],
+    #             # Add other fields from the form as needed
+    #             created_by=request.user,
+    #         )
+    #         course_instance.save()
     return render(
         request,
         "course/teacher_dashboard.html",
-        {"form": form, "courses": courses, "user": request.user},
+        {"courses": courses, "user": request.user},
+    )
+
+@login_required
+@admin_required
+def admin_dashboard(request):
+    courses = Course.objects.all()
+    return render(
+        request,
+        "course/admin_dashboard.html",
+        {"courses": courses, "user": request.user},
     )
 
 @login_required
